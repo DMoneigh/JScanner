@@ -14,6 +14,10 @@ Requirements
 
 JDK 7 or Later.
 
+Apache Commons IO API
+ObjectWeb ASM API
+Jsoup API
+
 
 Videos
 ======
