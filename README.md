@@ -14,11 +14,11 @@ Requirements
 
 JDK 7 or Later.
 
-Apache Commons IO API
+Apache Commons IO API - http://commons.apache.org/proper/commons-io/
 
-ObjectWeb ASM API
+ObjectWeb ASM API - http://asm.ow2.org/
 
-Jsoup API
+Jsoup API - http://jsoup.org/
 
 
 Videos
