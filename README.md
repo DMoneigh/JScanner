@@ -10,6 +10,10 @@ Documentation
 Log: https://docs.google.com/a/dragons.asms.net/document/d/1Jsw_3RNAdIMfvvbz9Xm0snbQbcdszSdE4hicAGxCEuE/edit
 
 
+Download Jar
+============
+Link: https://docs.google.com/a/dragons.asms.net/file/d/0B6ts56roqBwrblhPODkzTlNnU1k/edit
+
 Requirements
 ============
 
