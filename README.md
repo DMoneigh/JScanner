@@ -12,7 +12,7 @@ Log: https://docs.google.com/a/dragons.asms.net/document/d/1Jsw_3RNAdIMfvvbz9Xm0
 Requirements
 ============
 
-JDK 7 or Later.
+JDK 7 or Later - http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
 Apache Commons IO API - http://commons.apache.org/proper/commons-io/
 
