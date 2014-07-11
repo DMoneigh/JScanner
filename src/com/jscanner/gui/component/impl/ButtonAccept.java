@@ -73,7 +73,7 @@ public class ButtonAccept extends ComponentButton {
 								if (object instanceof MethodNode) {
 									MethodNode methodNode = (MethodNode) object;
 									if ((methodNode.name + methodNode.desc)
-											.equals(treePath.getPathComponent(4)
+											.equals(treePath.getPathComponent(3)
 													.toString()))
 										pluginThreats.put(methodNode.name +
 												methodNode.desc, false);
