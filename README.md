@@ -12,7 +12,7 @@ Log: https://docs.google.com/a/dragons.asms.net/document/d/1Jsw_3RNAdIMfvvbz9Xm0
 
 Download Jar
 ============
-Link: https://www.mediafire.com/?xhex0x4n8xm1gvl
+Link: https://www.mediafire.com/?9p4vr4cc1y11bz9
 
 Requirements For Compilation
 ============
