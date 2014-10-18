@@ -1,3 +1,5 @@
+Project Stopped. No longer working on this project.
+
 JScanner
 ========
 
