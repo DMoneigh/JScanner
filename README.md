@@ -12,12 +12,14 @@ Log: https://docs.google.com/a/dragons.asms.net/document/d/1Jsw_3RNAdIMfvvbz9Xm0
 
 Download Jar
 ============
-Link: https://www.mediafire.com/?73xud2zllxzugzl
+Java 8 (JRE) - http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
+
+Link: https://www.mediafire.com/?73xud2zllxzugzl (Download Java 8 first)
 
 Requirements For Compilation
 ============
 
-Java 8 - http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
+Java 8 (JDK) - http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
 Apache Commons IO API - http://commons.apache.org/proper/commons-io/
 
