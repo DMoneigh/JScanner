@@ -112,6 +112,11 @@ public class ArchiveScanner extends Object {
 					(LdcInsnNode) previousNode).cst);
 	}
 	
+	/**
+	 * Gets the scans results.
+	 * 
+	 * @return The scan results.
+	 */
 	public List<String> getResults() {
 		List<String> results = new ArrayList<String>();
 		results.add("---------------------------------------------------------");
