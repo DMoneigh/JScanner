@@ -115,7 +115,7 @@ public class ArchiveScanner extends Object {
 	/**
 	 * Gets the scans results.
 	 * 
-	 * @return The scan results.
+	 * @return The scan results
 	 */
 	public List<String> getResults() {
 		List<String> results = new ArrayList<String>();
