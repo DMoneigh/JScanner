@@ -17,7 +17,7 @@ Download Jar
 ============
 Java 8 (JRE) - http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
 
-Link: https://www.mediafire.com/?73xud2zllxzugzl (Download Java 8 first)
+Link: https://www.mediafire.com/?73xud2zllxzugzl (Download and Install Java 8 first)
 
 Requirements For Compilation
 ============
