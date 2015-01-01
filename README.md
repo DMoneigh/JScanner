@@ -40,7 +40,7 @@ JScanner 1.1: https://www.youtube.com/watch?v=MVXmA5kDGXQ
 
 JScanner 1.2: https://www.youtube.com/watch?v=2l-1NP5m3zw
 
-JScanner 1.3: TBA
+JScanner 1.3: https://www.youtube.com/watch?v=oj7ZaV2e660
 
 Donations
 =========
