@@ -18,6 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import net.jscanner.gui.Gui;
 import net.jscanner.gui.component.impl.MenuBarJScanner;
 import net.jscanner.gui.component.impl.TextAreaConsole;
+import net.jscanner.util.FileManager;
 
 /**
  * The main class.
@@ -54,6 +55,7 @@ public class JScanner extends Gui {
 	 * @param args String arguments passed to this application
 	 */
 	public static void main(String[] args) {
+		FileManager.createDirectories();
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException
@@ -86,7 +88,6 @@ public class JScanner extends Gui {
 			print(string);
 	}
 
-
 	/**
 	 * Clears the console.
 	 */
@@ -95,7 +96,7 @@ public class JScanner extends Gui {
 	}
 
 	/**
-	 * Opens the user's to the specified url.
+	 * Opens the user's default browser to the specified url.
 	 * 
 	 * @param url The specified url
 	 */

@@ -208,7 +208,7 @@ public class GuiThreatSelection extends Gui implements WindowListener {
 
 	@Override
 	public void windowOpened(WindowEvent e) {
-		jScanner.setVisible(false);
+		jScanner.setEnabled(false);
 	}
 
 	@Override
@@ -216,7 +216,7 @@ public class GuiThreatSelection extends Gui implements WindowListener {
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		jScanner.setVisible(true);
+		jScanner.setEnabled(true);
 	}
 
 	@Override

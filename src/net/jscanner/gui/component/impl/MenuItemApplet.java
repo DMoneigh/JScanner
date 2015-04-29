@@ -37,8 +37,8 @@ public class MenuItemApplet extends ComponentMenuItem {
 					this).setVisible(true);
 		} else {
 			if (JOptionPane.showConfirmDialog(this,
-					"If you are not executing this function in a virtual "
-					+ "machine you could damage your computer!") != 0)
+					"It is recommended to run unknown programs in a "
+					+ "Virtual Machine.") != 0)
 				return;
 			String url = JOptionPane.showInputDialog("Enter URL below.");
 			if (url == null || url.isEmpty()) {

@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
@@ -12,7 +14,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.jscanner.JScanner;
 import net.jscanner.archive.Archive;
-import net.jscanner.archive.ArchiveClassLoader;
 import net.jscanner.gui.component.ComponentMenuItem;
 import net.jscanner.gui.impl.GuiThreatSelection;
 import net.jscanner.util.ExecutionSecurityManager;
@@ -43,8 +44,8 @@ public class MenuItemApplication extends ComponentMenuItem {
 					this).setVisible(true);
 		} else {
 			if (JOptionPane.showConfirmDialog(this,
-					"If you are not executing this function in a virtual "
-					+ "machine you could damage your computer!") != 0)
+					"It is recommended to run unknown programs in a "
+					+ "Virtual Machine.") != 0)
 				return;
 			FileChooserArchive fileChooserArchive = new FileChooserArchive(this);
 			fileChooserArchive.setFileFilter(new FileNameExtensionFilter(
@@ -56,13 +57,17 @@ public class MenuItemApplication extends ComponentMenuItem {
 					String mainClass = jarFile.getManifest().getMainAttributes()
 							.getValue(Attributes.Name.MAIN_CLASS);
 					jarFile.close();
-					ArchiveClassLoader loader = new ArchiveClassLoader(archive);
+					URLClassLoader loader = new URLClassLoader(new URL[] {
+							new URL("jar", "",
+									"file:" + archive.getName() + "!/")
+					});
 					Class<?> clazz = loader.loadClass(mainClass);
 					Method method = clazz.getDeclaredMethod("main",
 							String[].class);
 					System.setSecurityManager(new ExecutionSecurityManager(
 							JScanner.getInstance(this)));
 					method.invoke(null, (Object) null);
+					loader.close();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				} catch (ClassNotFoundException e1) {
