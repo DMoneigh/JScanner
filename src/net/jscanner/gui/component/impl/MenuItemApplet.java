@@ -38,34 +38,41 @@ public class MenuItemApplet extends ComponentMenuItem {
 		} else {
 			if (JOptionPane.showConfirmDialog(this,
 					"It is recommended to run unknown programs in a "
-					+ "Virtual Machine.") != 0)
+							+ "Virtual Machine.") != 0)
 				return;
-			String url = JOptionPane.showInputDialog("Enter URL below.");
-			if (url == null || url.isEmpty()) {
-				JScanner.getInstance(this).print("URL was not specified");
-				return;
-			}
-			ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-			try {
-				Class<?> clazz = classLoader.loadClass("sun.applet.AppletViewer");
-				Method method = clazz.getDeclaredMethod("main", String[].class);
-				String[] params = new String[] {url};
-				System.setSecurityManager(new ExecutionSecurityManager(
-						JScanner.getInstance(this)));
-				method.invoke(null, (Object) params);
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (NoSuchMethodException e1) {
-				e1.printStackTrace();
-			} catch (SecurityException e1) {
-				e1.printStackTrace();
-			} catch (IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (IllegalArgumentException e1) {
-				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
-				e1.printStackTrace();
-			}
+			final MenuItemApplet mia = this;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					String url = JOptionPane.showInputDialog("Enter URL below.");
+					if (url == null || url.isEmpty()) {
+						JScanner.getInstance(mia).print("URL was not specified");
+						return;
+					}
+					ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+					try {
+						Class<?> clazz = classLoader.loadClass("sun.applet.AppletViewer");
+						Method method = clazz.getDeclaredMethod("main", String[].class);
+						String[] params = new String[] {url};
+						System.setSecurityManager(new ExecutionSecurityManager(
+								JScanner.getInstance(mia)));
+						method.invoke(null, (Object) params);
+					} catch (ClassNotFoundException e1) {
+						e1.printStackTrace();
+					} catch (NoSuchMethodException e1) {
+						e1.printStackTrace();
+					} catch (SecurityException e1) {
+						e1.printStackTrace();
+					} catch (IllegalAccessException e1) {
+						e1.printStackTrace();
+					} catch (IllegalArgumentException e1) {
+						e1.printStackTrace();
+					} catch (InvocationTargetException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}).start();
 		}
 	}
 

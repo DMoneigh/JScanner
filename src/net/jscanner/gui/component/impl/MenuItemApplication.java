@@ -45,45 +45,53 @@ public class MenuItemApplication extends ComponentMenuItem {
 		} else {
 			if (JOptionPane.showConfirmDialog(this,
 					"It is recommended to run unknown programs in a "
-					+ "Virtual Machine.") != 0)
+							+ "Virtual Machine.") != 0)
 				return;
-			FileChooserArchive fileChooserArchive = new FileChooserArchive(this);
-			fileChooserArchive.setFileFilter(new FileNameExtensionFilter(
-					"Jar Files", new String[] {"jar"}));
-			Archive archive = fileChooserArchive.getSelectedArchive();
-			if (archive != null) {
-				try {
-					JarFile jarFile = new JarFile(archive.getName());
-					String mainClass = jarFile.getManifest().getMainAttributes()
-							.getValue(Attributes.Name.MAIN_CLASS);
-					jarFile.close();
-					URLClassLoader loader = new URLClassLoader(new URL[] {
-							new URL("jar", "",
-									"file:" + archive.getName() + "!/")
-					});
-					Class<?> clazz = loader.loadClass(mainClass);
-					Method method = clazz.getDeclaredMethod("main",
-							String[].class);
-					System.setSecurityManager(new ExecutionSecurityManager(
-							JScanner.getInstance(this)));
-					method.invoke(null, (Object) null);
-					loader.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					e1.printStackTrace();
-				} catch (NoSuchMethodException e1) {
-					e1.printStackTrace();
-				} catch (SecurityException e1) {
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					e1.printStackTrace();
-				} catch (IllegalArgumentException e1) {
-					e1.printStackTrace();
-				} catch (InvocationTargetException e1) {
-					e1.printStackTrace();
+			final MenuItemApplication mia = this;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					FileChooserArchive fileChooserArchive = new FileChooserArchive(mia);
+					fileChooserArchive.setFileFilter(new FileNameExtensionFilter(
+							"Jar Files", new String[] {"jar"}));
+					Archive archive = fileChooserArchive.getSelectedArchive();
+					if (archive != null) {
+						try {
+							JarFile jarFile = new JarFile(archive.getName());
+							String mainClass = jarFile.getManifest().getMainAttributes()
+									.getValue(Attributes.Name.MAIN_CLASS);
+							jarFile.close();
+							URLClassLoader loader = new URLClassLoader(new URL[] {
+									new URL("jar", "",
+											"file:" + archive.getName() + "!/")
+							});
+							Class<?> clazz = loader.loadClass(mainClass);
+							Method method = clazz.getDeclaredMethod("main",
+									String[].class);
+							System.setSecurityManager(new ExecutionSecurityManager(
+									JScanner.getInstance(mia)));
+							method.invoke(null, (Object) null);
+							loader.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						} catch (ClassNotFoundException e1) {
+							e1.printStackTrace();
+						} catch (NoSuchMethodException e1) {
+							e1.printStackTrace();
+						} catch (SecurityException e1) {
+							e1.printStackTrace();
+						} catch (IllegalAccessException e1) {
+							e1.printStackTrace();
+						} catch (IllegalArgumentException e1) {
+							e1.printStackTrace();
+						} catch (InvocationTargetException e1) {
+							e1.printStackTrace();
+						}
+					}
 				}
-			}
+
+			}).start();
 		}
 	}
 
