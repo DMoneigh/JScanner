@@ -26,7 +26,14 @@ public class MenuItemNewWindow extends ComponentMenuItem {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new JScanner().setVisible(true);
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				new JScanner().setVisible(true);
+			}
+			
+		}).start();
 	}
 
 }
