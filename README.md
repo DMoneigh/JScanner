@@ -46,5 +46,3 @@ Donations
 =========
 
 Bitcoin Address: 14ESpgxqm1eJ1mnhbg1XeVEum54gejcKXg
-
-Paypal: dmoneigh@gmail.com
