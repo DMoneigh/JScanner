@@ -108,8 +108,7 @@ public class ArchiveScanner extends Object {
 			}
 		}
 		if (previousNode instanceof LdcInsnNode)
-			threatClass.addInteraction("Interaction: " + (
-					(LdcInsnNode) previousNode).cst);
+			threatClass.addInteraction("" + ((LdcInsnNode) previousNode).cst);
 	}
 	
 	/**
