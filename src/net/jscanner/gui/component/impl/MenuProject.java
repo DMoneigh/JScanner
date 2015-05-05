@@ -5,7 +5,7 @@ import net.jscanner.gui.component.ComponentMenu;
 /**
  * The "Project" menu.
  * 
- * @author desmond
+ * @author Desmond Jackson
  */
 public class MenuProject extends ComponentMenu {
 
