@@ -10,14 +10,14 @@ http://www.jscanner.net
 Log
 ===
 
-Log: https://docs.google.com/a/dragons.asms.net/document/d/1Jsw_3RNAdIMfvvbz9Xm0snbQbcdszSdE4hicAGxCEuE/edit
+Log - https://docs.google.com/a/dragons.asms.net/document/d/1Jsw_3RNAdIMfvvbz9Xm0snbQbcdszSdE4hicAGxCEuE/edit
 
 
 Download Jar
 ============
 Java 8 (JRE) - http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
 
-Link: https://www.mediafire.com/?73xud2zllxzugzl (Download and Install Java 8 first)
+Link - https://www.mediafire.com/?73xud2zllxzugzl (Download and Install Java 8 first)
 
 Requirements For Compilation
 ============
@@ -34,15 +34,20 @@ Jsoup API - http://jsoup.org/
 Videos
 ======
 
-JScanner 1.0: https://www.youtube.com/watch?v=ue4b22Blm7U
+JScanner 1.0 - https://www.youtube.com/watch?v=ue4b22Blm7U
 
-JScanner 1.1: https://www.youtube.com/watch?v=MVXmA5kDGXQ
+JScanner 1.1 - https://www.youtube.com/watch?v=MVXmA5kDGXQ
 
-JScanner 1.2: https://www.youtube.com/watch?v=2l-1NP5m3zw
+JScanner 1.2 - https://www.youtube.com/watch?v=2l-1NP5m3zw
 
-JScanner 1.3: https://www.youtube.com/watch?v=oj7ZaV2e660
+JScanner 1.3 - https://www.youtube.com/watch?v=oj7ZaV2e660
+
+Google Science Fair Project
+===========================
+
+Link - https://www.googlesciencefair.com/projects/en/2015/225a96c56d89e4979a03c2e21800355c1615b749f0c5015c8e3511c7d3aa97fd
 
 Donations
 =========
 
-Bitcoin Address: 14ESpgxqm1eJ1mnhbg1XeVEum54gejcKXg
+Bitcoin Address - 14ESpgxqm1eJ1mnhbg1XeVEum54gejcKXg
