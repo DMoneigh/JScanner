@@ -34,17 +34,6 @@ ObjectWeb ASM API - http://asm.ow2.org/
 
 Jsoup API - http://jsoup.org/
 
-Videos
-======
-
-JScanner 1.0 - https://www.youtube.com/watch?v=ue4b22Blm7U
-
-JScanner 1.1 - https://www.youtube.com/watch?v=MVXmA5kDGXQ
-
-JScanner 1.2 - https://www.youtube.com/watch?v=2l-1NP5m3zw
-
-JScanner 1.3 - https://www.youtube.com/watch?v=oj7ZaV2e660
-
 Donations
 =========
 
