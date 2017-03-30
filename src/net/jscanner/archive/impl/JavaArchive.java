@@ -5,20 +5,19 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
+import org.apache.commons.io.IOUtils;
 
 import net.jscanner.archive.Archive;
 
 /**
- * Represents a Jar file.
+ * Represents a jar file.
  * 
  * @author Desmond Jackson
  */
 public class JavaArchive extends Archive {
 
 	/**
-	 * Creates the Jar file representation.
+	 * Creates a new jar file representation.
 	 * 
 	 * @param jarFile The jar file to represent
 	 */
@@ -27,23 +26,17 @@ public class JavaArchive extends Archive {
 	}
 
 	@Override
-	public void findClasses() {
-		Enumeration<JarEntry> jarEntries = jarFile.entries();
-		while (jarEntries.hasMoreElements()) {
-			JarEntry jarEntry = jarEntries.nextElement();
-			String entryName = jarEntry.getName();
-			if (entryName.endsWith(".class")) {
-				ClassNode classNode = new ClassNode();
-				try {
-					ClassReader  classReader = new ClassReader(
-							jarFile.getInputStream(jarEntry));
-					classReader.accept(classNode, ClassReader.SKIP_DEBUG |
-							ClassReader.SKIP_FRAMES);
-					classes.put(entryName.replace(".class", ""), classNode);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+	protected void findClasses() {
+		try {
+			Enumeration<JarEntry> entries = jarFile.entries();
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				if (entry.getName().endsWith(".class"))
+					addClass(IOUtils.toByteArray(jarFile.getInputStream(entry)));
 			}
+			jarFile.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.jar.JarFile;
 
-import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
 /**
@@ -14,76 +14,59 @@ import org.objectweb.asm.tree.ClassNode;
  * 
  * @author Desmond Jackson
  */
-public abstract class Archive extends Object implements Iterable<ClassNode> {
+public abstract class Archive implements Iterable<ClassNode> {
 	
 	/**
-	 * The class file.
+	 * The class file to represent.
 	 */
 	protected File classFile;
 	
 	/**
-	 * The Java archive.
+	 * The jar file to represent.
 	 */
 	protected JarFile jarFile;
 	
 	/**
 	 * The classes found in the archive.
 	 */
-	protected Map<String, ClassNode> classes = new TreeMap<String, ClassNode>();
+	private Map<String, ClassNode> classes = new TreeMap<String, ClassNode>();
 	
 	/**
-	 * Creates a new class file representation.
+	 * Creates a new archive from a class file.
 	 * 
-	 * @param classFile The class file to represent
+	 * @param classFiles The class file
 	 */
-	public Archive(File classFile) {
-		super();
+	protected Archive(File classFile) {
 		this.classFile = classFile;
 		findClasses();
 	}
 	
 	/**
-	 * Creates a new Java archive representation.
+	 * Creates a new archive from a jar file.
 	 * 
-	 * @param jarFile The Java archive to represent
+	 * @param jarFile The jar file
 	 */
-	public Archive(JarFile jarFile) {
-		super();
+	protected Archive(JarFile jarFile) {
 		this.jarFile = jarFile;
 		findClasses();
 	}
 	
 	/**
-	 * Gets a class node by name.
+	 * Adds a class to the map of classes found in the archive.
 	 * 
-	 * @param name The name of the class node
-	 * 
-	 * @return null if class node is not found
+	 * @param bytes The bytes of the class
 	 */
-	public ClassNode get(String name) {
-		return classes.get(name);
-	}
-	
-	/**
-	 * Gets the bytes of a class node by name.
-	 * 
-	 * @param name The name of the class node
-	 * 
-	 * @return null if the class node is not found
-	 */
-	public byte[] getBytes(String name) {
-		ClassNode classNode = get(name);
-		if (classNode == null)
-			return null;
-		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		classNode.accept(classWriter);
-		return classWriter.toByteArray();
+	protected void addClass(byte[] bytes) {
+		ClassNode node = new ClassNode();
+		ClassReader reader = new ClassReader(bytes);
+		reader.accept(node, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+		classes.put(node.name, node);
 	}
 	
 	/**
 	 * Finds classes in the archive.
 	 */
-	public abstract void findClasses();
+	protected abstract void findClasses();
 	
 	/**
 	 * Gets the name of the archive.
@@ -96,4 +79,5 @@ public abstract class Archive extends Object implements Iterable<ClassNode> {
 	public Iterator<ClassNode> iterator() {
 		return classes.values().iterator();
 	}
+
 }

@@ -1,140 +1,87 @@
 package net.jscanner.archive;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
 
-import net.jscanner.threat.impl.ThreatClass;
-import net.jscanner.threat.impl.ThreatMethod;
+import com.google.gson.Gson;
+import com.tonicsystems.jarjar.asm.Opcodes;
 
 /**
- * Scans archives for threats.
+ * Scans archives for malicious bytecode instructions.
  * 
  * @author Desmond Jackson
  */
-public class ArchiveScanner extends Object {
-	
+public class ArchiveScanner {
+
 	/**
 	 * The archive to scan.
 	 */
 	private Archive archive;
-	
+
 	/**
-	 * The threats to scan for.
+	 * The method instructions nodes found in the archive.
 	 */
-	private List<ThreatClass> threatClasses;
-	
+	private List<MethodInsnNode> methodInstructionNodes;
+
 	/**
-	 * Prepares an archive for scanning.
+	 * Creates a new archive scanner.
 	 * 
 	 * @param archive The archive to scan
-	 * 
-	 * @param threatClasses The threats to scan for
 	 */
-	public ArchiveScanner(Archive archive, List<ThreatClass> threatClasses) {
-		super();
+	public ArchiveScanner(Archive archive) {
 		this.archive = archive;
-		this.threatClasses = threatClasses;
-		decompose();
+		methodInstructionNodes = findMethodInstructionNodes();
 	}
-	
+
 	/**
-	 * Breaks the archive down to obtain necessary instructions.
-	 */
-	private void decompose() {
-		for (ClassNode classNode : archive)
-			for (Object node : classNode.methods) {
-				MethodNode methodNode = (MethodNode) node;
-				for (AbstractInsnNode abstractInsnNode :
-					methodNode.instructions.toArray())
-					if (abstractInsnNode instanceof MethodInsnNode)
-						scan((MethodInsnNode) abstractInsnNode);
-			}
-	}
-	
-	/**
-	 * Scans the method instruction node for threats.
+	 * Finds method instruction nodes in the archive.
 	 * 
-	 * @param methodInsnNode The method instruction node to scan
+	 * @return The method instruction nodes found in the archive
 	 */
-	private void scan(MethodInsnNode methodInsnNode) {
-		for (ThreatClass threatClass : threatClasses) {
-			if (threatClass.getName().equals(methodInsnNode.owner)) {
-				threatClass.setUsed();
-				if (methodInsnNode.name.equals("<init>"))
-					addInteraction(threatClass, methodInsnNode);
-				for (ThreatMethod threatMethod : threatClass.getThreatMethods())
-					if (methodInsnNode.name.equals(threatMethod.getName())) {
-						threatMethod.setUsed();
-						addInteraction(threatClass, methodInsnNode);
+	private List<MethodInsnNode> findMethodInstructionNodes() {
+		List<MethodInsnNode> invocations = new ArrayList<MethodInsnNode>();
+		for (ClassNode node : archive) for (Object object : node.methods.toArray())
+			if (object instanceof MethodNode)
+				for (AbstractInsnNode ain : ((MethodNode) object).instructions.toArray())
+					if (ain instanceof MethodInsnNode)
+						invocations.add((MethodInsnNode) ain);
+					else if (ain instanceof InvokeDynamicInsnNode) {
+						Handle handle = ((InvokeDynamicInsnNode) ain).bsm;
+						invocations.add(new MethodInsnNode(Opcodes.INVOKEDYNAMIC, handle.getOwner(), handle.getName(), handle.getDesc(), handle.isInterface()));
 					}
-			}
-		}
+		return invocations;
 	}
-	
+
 	/**
-	 * Appends an interaction to the list of interactions in a threat class if
-	 * possible.
+	 * Scans the archive for the specified class map of threats.
 	 * 
-	 * @param threatClass The threat class to add the interaction to
+	 * @param threats A map of threatening classes and their methods
 	 * 
-	 * @param abstractInsnNode The abstract instruction node to derive the
-	 * interaction from
+	 * @return The threats found in the archive in JSON format
 	 */
-	private void addInteraction(ThreatClass threatClass,
-			AbstractInsnNode abstractInsnNode) {
-		AbstractInsnNode previousNode = abstractInsnNode.getPrevious();
-		if (previousNode instanceof VarInsnNode) {
-			int var = ((VarInsnNode) previousNode).var;
-			previousNode = previousNode.getPrevious();
-			while (previousNode != null) {
-				if (previousNode instanceof VarInsnNode) {
-					VarInsnNode varInsnNode = (VarInsnNode) previousNode;
-					if (varInsnNode.getOpcode() > 53 &&
-							varInsnNode.getOpcode() < 87 &&
-							varInsnNode.var == var) {
-						previousNode = varInsnNode.getPrevious();
-						break;
-					}
+	public String scan(Map<String, List<String>> threats) {
+		Map<String, List<String>> found = new HashMap<String, List<String>>();
+		for (MethodInsnNode min : methodInstructionNodes) {
+			String clazz = min.owner; String method = min.name;
+			for (Entry<String, List<String>> entry : threats.entrySet())
+				if (entry.getKey().equals(clazz)) {
+					if (!found.containsKey(clazz))
+						found.put(clazz, new ArrayList<String>());
+					if (entry.getValue().contains(method) && !found.get(clazz).contains(method))
+						found.get(clazz).add(method);
 				}
-				previousNode = previousNode.getPrevious();
-			}
 		}
-		if (previousNode instanceof LdcInsnNode)
-			threatClass.addInteraction("" + ((LdcInsnNode) previousNode).cst);
+		return new Gson().toJson(found);
 	}
-	
-	/**
-	 * Gets the scans results.
-	 * 
-	 * @return The scan results
-	 */
-	public List<String> getResults() {
-		List<String> results = new ArrayList<String>();
-		results.add("---------------------------------------------------------");
-		results.add("Scanning: " + archive.getName());
-		results.add("Time: " + new Date(System.currentTimeMillis()));
-		results.add("\n");
-		for (ThreatClass threatClass : threatClasses)
-			if (threatClass.isUsed()) {
-				results.add(threatClass.getOutput());
-				for (ThreatMethod threatMethod : threatClass.getThreatMethods())
-					if (threatMethod.isUsed())
-						results.add(threatMethod.getOutput());
-				for (String interaction : threatClass.getInteractions())
-					results.add(interaction);
-				results.add("");
-			}
-		results.add("\n");
-		results.add("Scan Complete!");
-		results.add("---------------------------------------------------------");
-		return results;
-	}
+
 }

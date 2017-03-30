@@ -1,63 +1,95 @@
 package net.jscanner.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.jar.JarFile;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
-import net.jscanner.archive.Archive;
-import net.jscanner.archive.impl.ClassFile;
 import net.jscanner.archive.impl.JavaArchive;
 
 /**
- * Manages JScanner's files.
+ * Manages the files of JScanner.
  * 
  * @author Desmond Jackson
  */
-public class FileManager extends Object {
+public class FileManager {
 	
 	/**
-	 * The directories in JScanner's home directory.
+	 * All necessary directories.
 	 */
-	private static File[] DIRECTORIES = {
-		getDirectory("plugins")
-	};
-
+	private static final Map<String, File> DIRECTORIES = new HashMap<String, File>();
+	
 	/**
-	 * Gets a directory in JScanner's home directory.
-	 * 
-	 * @param directory The directory in JScanner's home directory
-	 * 
-	 * @return A directory in JScanner's home directory
+	 * The Java Runtime Environment archive's classes and their children methods.
 	 */
-	private static File getDirectory(String directory) {
-		return new File(System.getProperty("user.home") + "/JScanner/"
-				+ directory);
+	private static Map<String, List<String>> classes;
+	
+	static {
+		DIRECTORIES.put("home", getDirectory(""));
 	}
 	
 	/**
-	 * Creates directories in JScanner's home directory.
+	 * Gets a directory by name.
+	 * 
+	 * @param name The name of the directory
+	 * 
+	 * @return A directory by name
+	 */
+	private static File getDirectory(String name) {
+		return new File(System.getProperty("user.home") + "/JScanner/" + name);
+	}
+	
+	/**
+	 * Creates all necessary directories.
 	 */
 	public static void createDirectories() {
-		for (File directory : DIRECTORIES)
+		for (File directory : DIRECTORIES.values())
 			directory.mkdirs();
 	}
 	
 	/**
-	 * Gets either the rt.jar or classes.jar archive.
+	 * Gets the Java Runtime Environment archive's classes and their children methods.
 	 * 
-	 * @return null if either rt.jar or classes.jar could not be found
+	 * @return The Java Runtime Environment archive's classes and their children methods
 	 */
-	public static JavaArchive getRuntimeArchive() {
-		for (File jarFile : FileUtils.listFiles(new File(
-				System.getProperty("java.home")), new String[] {"jar"}, true)) {
-			String jarFileName = jarFile.getName();
-			if (jarFileName.equals("rt.jar") || jarFileName.equals("classes.jar"))
+	public static Map<String, List<String>> getRuntimeClasses() {
+		if (FileManager.classes != null) return FileManager.classes;
+		Map<String, List<String>> classes = new TreeMap<String, List<String>>();
+		for (ClassNode node : FileManager.getRuntimeArchive()) {
+			List<String> methodNames = new ArrayList<String>();
+			for (Object object : node.methods.toArray())
+				if (object instanceof MethodNode) {
+					String name = ((MethodNode) object).name;
+					if (!methodNames.contains(name))
+						methodNames.add(name);
+				}
+			classes.put(node.name, methodNames);
+		}
+		return (FileManager.classes = classes);
+	}
+	
+	/**
+	 * Gets the System's Java Runtime Environment archive.
+	 * 
+	 * @return The System's Java Runtime Environment archive
+	 */
+	private static JavaArchive getRuntimeArchive() {
+		for (File jar : FileUtils.listFiles(new File(System.getProperty("java.home")), new String[] {"jar"}, true)) {
+			String name = jar.getName();
+			if (name.equalsIgnoreCase("rt.jar") || name.equalsIgnoreCase("classes.jar"))
 				try {
-					return new JavaArchive(new JarFile(jarFile));
+					return new JavaArchive(new JarFile(jar));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -66,24 +98,37 @@ public class FileManager extends Object {
 	}
 	
 	/**
-	 * Gets the archives in the "plugins" directory.
+	 * Gets the contents of a file.
 	 * 
-	 * @return The archives in the "plugins" directory
+	 * @param file The file
+	 * 
+	 * @return The contents of a file
 	 */
-	public static List<Archive> getPlugins() {
-		List<Archive> plugins = new ArrayList<Archive>();
-		for (File file : DIRECTORIES[0].listFiles()) {
-			String name = file.getName();
-			if (name.endsWith(".class"))
-				plugins.add(new ClassFile(file));
-			else if (name.endsWith(".jar"))
-				try {
-					plugins.add(new JavaArchive(new JarFile(file)));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+	public static String contents(String file) {
+		String string = "";
+		try {
+			for (String s : IOUtils.readLines(FileManager.class.getResourceAsStream(file), Charset.defaultCharset()))
+				string += s;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return plugins;
+		return string;
+	}
+	
+	/**
+	 * Gets the lines from a file.
+	 * 
+	 * @param file The file
+	 * 
+	 * @return null if lines could not be read
+	 */
+	public static List<String> lines(String file) {
+		try {
+			return IOUtils.readLines(new FileInputStream(file), Charset.defaultCharset());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 }

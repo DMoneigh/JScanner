@@ -1,13 +1,8 @@
 package net.jscanner.archive.impl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
+import java.nio.file.Files;
 
 import net.jscanner.archive.Archive;
 
@@ -17,9 +12,9 @@ import net.jscanner.archive.Archive;
  * @author Desmond Jackson
  */
 public class ClassFile extends Archive {
-
+	
 	/**
-	 * Creates the class file representation.
+	 * Creates a new class file representation.
 	 * 
 	 * @param classFile The class file to represent
 	 */
@@ -28,22 +23,9 @@ public class ClassFile extends Archive {
 	}
 
 	@Override
-	public void findClasses() {
+	protected void findClasses() {
 		try {
-			InputStream inputStream = new FileInputStream(classFile);
-			byte[] buffer = new byte[1024];
-			int count;
-			ByteArrayOutputStream byteArrayOutputStream =
-					new ByteArrayOutputStream();
-			while ((count = inputStream.read(buffer)) != -1)
-				byteArrayOutputStream.write(buffer, 0 , count);
-			inputStream.close();
-			ClassNode classNode = new ClassNode();
-			ClassReader classReader = new ClassReader(
-					byteArrayOutputStream.toByteArray());
-			classReader.accept(classNode, ClassReader.SKIP_DEBUG |
-					ClassReader.SKIP_FRAMES);
-			classes.put(classNode.name.replace(".class", ""), classNode);
+			addClass(Files.readAllBytes(classFile.toPath()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
