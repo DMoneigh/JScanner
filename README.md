@@ -9,7 +9,7 @@ http://www.jscanner.net
 
 Log
 ===
-Log - https://docs.google.com/a/dragons.asms.net/document/d/1Jsw_3RNAdIMfvvbz9Xm0snbQbcdszSdE4hicAGxCEuE/edit
+Log - https://docs.google.com/document/d/1LX4xJedh_2-_KfrnX1CWq3_oOC1L3nc5rFstMItsrjA/edit
 
 JavaOne Presentation
 ====================
