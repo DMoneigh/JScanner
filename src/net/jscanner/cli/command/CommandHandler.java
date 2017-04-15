@@ -36,6 +36,7 @@ public class CommandHandler extends Thread {
 			handleCommand(name, line.replaceFirst(Pattern.quote(name), "").trim().split(" "));
 		}
 		scanner.close();
+		System.exit(0);
 	}
 
 	/**
