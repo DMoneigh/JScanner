@@ -1,7 +1,7 @@
 JScanner
 ========
 
-An Open-Source Java Malware Defense Tool
+Java Malware Defense Tool
 
 Website
 =======
