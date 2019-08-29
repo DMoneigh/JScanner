@@ -5,7 +5,7 @@ An Open-Source Java Malware Defense Tool
 
 Website
 =======
-http://www.jscanner.net
+https://www.jscanner.com
 
 Log
 ===
@@ -22,5 +22,3 @@ Link - https://www.googlesciencefair.com/projects/en/2015/225a96c56d89e4979a03c2
 Download Jar
 ============
 Java 8 (JRE) - http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
-
-Link - <pending>
