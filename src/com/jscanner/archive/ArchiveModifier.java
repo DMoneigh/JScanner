@@ -26,7 +26,7 @@ import com.jscanner.archive.util.VariableManager;
  * @author Desmond Jackson
  */
 public class ArchiveModifier implements Opcodes {
-	
+
 	/**
 	 * The archive to modify.
 	 */
@@ -47,21 +47,20 @@ public class ArchiveModifier implements Opcodes {
 		this.archive = archive;
 		archive.addClassNode(VariableManager.class);
 		ClassNode mainClassNode = archive.getClassNode(archive.getMainClassName().replaceAll("\\.", "/"));
-		
+
 		mainClassNode.fields.add(getInstancesField());
-		mainClassNode.methods.add(getClinitMethod());
 		mainClassNode.methods.add(getSetInstanceVariableValueMethod());
 		mainClassNode.methods.add(getSetStaticVariableValueMethod());
 		mainClassNode.methods.add(getGetStaticVariableValueMethod());
 		mainClassNode.methods.add(getGetInstanceVariableValueMethod());
-		
+
 		for (ClassNode node : archive) {
 			for (Object fieldNodeObject : node.fields)
 				if (fieldNodeObject instanceof FieldNode) {
 					FieldNode fn = (FieldNode) fieldNodeObject;
 					Type type = Type.getType(fn.desc);
-					if (!Modifier.isFinal(fn.access) && type.equals(Type.INT_TYPE) ||
-							type.equals(Type.getType(String.class))) {
+					if (fn != null && type != null && !Modifier.isFinal(fn.access)
+							&& type.equals(Type.INT_TYPE) || type.equals(Type.getType(String.class))) {
 						variables.add(new Variable(node.name.replaceAll("/", "\\."), fn.name, type,
 								Modifier.isStatic(fn.access)));
 						node.methods.add(getSetterMethod(node.name, fn, type));
@@ -71,16 +70,18 @@ public class ArchiveModifier implements Opcodes {
 			for (Object methodNodeObject : node.methods)
 				if (methodNodeObject instanceof MethodNode) {
 					MethodNode mn = (MethodNode) methodNodeObject;
-					if (mn.name.equals("<init>"))
+					if (mn.name.equals("<init>")) {
 						for (AbstractInsnNode ain : mn.instructions.toArray())
 							if (ain.getOpcode() == INVOKESPECIAL) {
 								mn.instructions.insert(ain, getConstructorHook());
 								break;
 							}
+					} else if (mn.name.equals("<clinit>"))
+						mn.instructions.insertBefore(mn.instructions.getLast(), getClinitInstructions());
 				}
 		}
 	}
-	
+
 	/**
 	 * Gets the constructor hook.
 	 * 
@@ -232,21 +233,19 @@ public class ArchiveModifier implements Opcodes {
 		return method;
 	}
 
-	//TODO Merge <clinit> methods in every class
 	/**
-	 * Gets the <clinit> method.
+	 * Gets the <clinit> method instructions.
 	 * 
-	 * @return The <clinit> method
+	 * @return The <clinit> method instructions
 	 */
-	private MethodNode getClinitMethod() {
-		MethodNode clinit = new MethodNode(ACC_STATIC, "<clinit>", "()V", null, null);
-		clinit.instructions.add(new TypeInsnNode(NEW, "java/util/HashMap"));
-		clinit.instructions.add(new InsnNode(DUP));
-		clinit.instructions.add(new MethodInsnNode(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false));
-		clinit.instructions.add(new FieldInsnNode(PUTSTATIC, archive.getMainClassName().replaceAll("\\.", "/"),
+	private InsnList getClinitInstructions(){
+		InsnList insn = new InsnList();
+		insn.add(new TypeInsnNode(NEW, "java/util/HashMap"));
+		insn.add(new InsnNode(DUP));
+		insn.add(new MethodInsnNode(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false));
+		insn.add(new FieldInsnNode(PUTSTATIC, archive.getMainClassName().replaceAll("\\.", "/"),
 				"INSTANCES", "Ljava/util/Map;"));
-		clinit.instructions.add(new InsnNode(RETURN));
-		return clinit;
+		return insn;
 	}
 
 	/**

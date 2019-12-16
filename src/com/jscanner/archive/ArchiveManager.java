@@ -35,7 +35,9 @@ public class ArchiveManager {
 		classLoader = new ArchiveClassLoader(archive);
 		
 		try {
-			classLoader.loadClass(archive.getMainClassName(), true).getDeclaredMethod("main", String[].class)
+			classLoader
+			.loadClass(archive.getMainClassName(), true)
+			.getDeclaredMethod("main", String[].class)
 			.invoke(null, (Object) null);
 			return true;
 		} catch (IllegalAccessException | IllegalArgumentException

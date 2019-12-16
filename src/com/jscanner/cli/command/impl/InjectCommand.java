@@ -56,39 +56,51 @@ public class InjectCommand extends Command {
 			} else {
 
 				switch (arguments[0]) {
-				
+
 				case "kill" :
-					
+
 					injected = false;
 					jar.close();
-					
+
 					System.out.println("Injection cleaned!");
-					
+
 					break;
-					
+
 				case "signatures" :
-					
+
 					for (String s : ArchiveManager.getVariableSignatures())
 						System.out.println(s);
-					
+
 					break;
-					
+
 				case "set" :
-					
-					if (arguments.length >= 3 && arguments[1] != null && arguments[2] != null && arguments[3] != null) {
-						//TODO only works on Strings..... add internal casting to convert between integers, doubles, floats, and booleans
-						ArchiveManager.setVariableValue(arguments[1], arguments[2], arguments[3]);
-						System.out.println("Successfully set the value of " + arguments[2] + " to " + arguments[3]);
+
+					if (arguments.length >= 3 && arguments[1] != null && arguments[2] != null && arguments[3] != null && arguments[4] != null) {
+						String type = arguments[3];
+
+						if (type.equalsIgnoreCase("integer"))
+							ArchiveManager.setVariableValue(arguments[1], arguments[2], Integer.parseInt(arguments[4]));
+						else if (type.equalsIgnoreCase("double"))
+							ArchiveManager.setVariableValue(arguments[1], arguments[2], Double.parseDouble(arguments[4]));
+						else if (type.equalsIgnoreCase("float"))
+							ArchiveManager.setVariableValue(arguments[1], arguments[2], Float.parseFloat(arguments[4]));
+						else if (type.equalsIgnoreCase("boolean"))
+							ArchiveManager.setVariableValue(arguments[1], arguments[2], Boolean.parseBoolean(arguments[4]));
+						else if (type.equalsIgnoreCase("character"))
+							ArchiveManager.setVariableValue(arguments[1], arguments[2], arguments[4].charAt(0));
+						else
+							ArchiveManager.setVariableValue(arguments[1], arguments[2], arguments[4]);
+						
+						System.out.println("Successfully set the value of " + arguments[2] + " to " + arguments[4]);
 					}
-					
+
 					break;
-					
+
 				case "get" :
-					
-					if (arguments.length >= 2 && arguments[1] != null && arguments[2] != null) {
+
+					if (arguments.length >= 2 && arguments[1] != null && arguments[2] != null)
 						System.out.println(ArchiveManager.getVariableValue(arguments[1], arguments[2]));
-					}
-					
+
 				default :
 					break;
 				}
